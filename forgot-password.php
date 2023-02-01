@@ -8,18 +8,18 @@ if(isset($_POST['submit']))
     $email=$_POST['email'];
 $mobile=$_POST['mobile'];
 $newpassword=md5($_POST['newpassword']);
-  $sql ="SELECT MobileNumber FROM tbluser WHERE MobileNumber=:mobile";
+  $sql ="SELECT Email FROM tbladmin WHERE Email=:email and MobileNumber=:mobile";
 $query= $dbh -> prepare($sql);
-
+$query-> bindParam(':email', $email, PDO::PARAM_STR);
 $query-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
 $query-> execute();
 $results = $query -> fetchAll(PDO::FETCH_OBJ);
 if($query -> rowCount() > 0)
 {
-$con="update tbluser set Password=:newpassword where MobileNumber=:mobile";
+$con="update tbladmin set Password=:newpassword where Email=:email and MobileNumber=:mobile";
 $chngpwd1 = $dbh->prepare($con);
 $chngpwd1-> bindParam(':email', $email, PDO::PARAM_STR);
-
+$chngpwd1-> bindParam(':mobile', $mobile, PDO::PARAM_STR);
 $chngpwd1-> bindParam(':newpassword', $newpassword, PDO::PARAM_STR);
 $chngpwd1->execute();
 echo "<script>alert('Your Password succesfully changed');</script>";
@@ -106,18 +106,30 @@ return true;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="logo">
-                                                 <h3 style="font-weight: bold;color: blue">OBCS</h3>
+                                               <h3 style="font-weight: bold;color: blue">OBCS</h3>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="login-title">
-                                                <h1 style="color: blue">Forgot Password</h1>
+                                                <h1 style="color: red">Forgot Password</h1>
                                             </div>
                                         </div>
                                     </div>
-                                 
+                                    <div class="row">
+                                        <div class="col-lg-4">
+                                            <div class="login-input-head">
+                                                <p>Email Address</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-8">
+                                            <div class="login-input-area">
+                                                <input type="text" placeholder="Email Address" required="true" name="email">
+                                                <i class="fa fa-envelope login-user" aria-hidden="true"></i>
+                                            </div>
+                                        </div>
+                                    </div>
                                      <div class="row">
                                         <div class="col-lg-4">
                                             <div class="login-input-head">

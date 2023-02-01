@@ -2,27 +2,26 @@
 session_start();
 error_reporting(0);
 include('includes/dbconnection.php');
-if (strlen($_SESSION['obcsuid']==0)) {
+if (strlen($_SESSION['obcsaid']==0)) {
   header('location:logout.php');
   } else{
     if(isset($_POST['submit']))
   {
-    $uid=$_SESSION['obcsuid'];
-    $fname=$_POST['fname'];
-    $lname=$_POST['lname'];
-
-  $add=$_POST['add'];
-  $sql="update tbluser set FirstName=:fname,LastName=:lname,Address=:add where ID=:uid";
+    $adminid=$_SESSION['obcsaid'];
+    $AName=$_POST['adminname'];
+  $mobno=$_POST['mobilenumber'];
+  $email=$_POST['email'];
+  $sql="update tbladmin set AdminName=:adminname,MobileNumber=:mobilenumber,Email=:email where ID=:aid";
      $query = $dbh->prepare($sql);
-     $query->bindParam(':fname',$fname,PDO::PARAM_STR);
-     $query->bindParam(':lname',$lname,PDO::PARAM_STR);
-
-     $query->bindParam(':add',$add,PDO::PARAM_STR);
-     $query->bindParam(':uid',$uid,PDO::PARAM_STR);
+     $query->bindParam(':adminname',$AName,PDO::PARAM_STR);
+     $query->bindParam(':email',$email,PDO::PARAM_STR);
+     $query->bindParam(':mobilenumber',$mobno,PDO::PARAM_STR);
+     $query->bindParam(':aid',$adminid,PDO::PARAM_STR);
 $query->execute();
 
         echo '<script>alert("Profile has been updated")</script>';
-     echo "<script>window.location.href ='profile.php'</script>";
+         echo "<script>window.location.href ='profile.php'</script>";
+     
 
   }
   ?>
@@ -124,11 +123,10 @@ $query->execute();
                                                 <div class="all-form-element-inner">
                                                     
                                                     <form method="post">
-                                                        <?php
-$uid=$_SESSION['obcsuid'];
-$sql="SELECT * from  tbluser where ID=:uid";
+                                                       <?php
+
+$sql="SELECT * from  tbladmin";
 $query = $dbh -> prepare($sql);
-$query->bindParam(':uid',$uid,PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 $cnt=1;
@@ -139,20 +137,30 @@ foreach($results as $row)
                                                         <div class="form-group-inner">
                                                             <div class="row">
                                                                 <div class="col-lg-3">
-                                                                    <label class="login2 pull-right pull-right-pro">First Name</label>
+                                                                    <label class="login2 pull-right pull-right-pro">Admin Name</label>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <input type="text" class="form-control" name="fname" value="<?php  echo $row->FirstName;?>" required="true" />
+                                                                     <input type="text" class="form-control" name="adminname" value="<?php  echo $row->AdminName;?>" required='true'>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="form-group-inner">
                                                             <div class="row">
                                                                 <div class="col-lg-3">
-                                                                    <label class="login2 pull-right pull-right-pro">Last Name</label>
+                                                                    <label class="login2 pull-right pull-right-pro">User Name</label>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <input type="text" class="form-control" name="lname" value="<?php  echo $row->LastName;?>" required="true" />
+                                                                     <input type="text" class="form-control" name="username" value="<?php  echo $row->UserName;?>" readonly="true">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                         <div class="form-group-inner">
+                                                            <div class="row">
+                                                                <div class="col-lg-3">
+                                                                    <label class="login2 pull-right pull-right-pro">Email</label>
+                                                                </div>
+                                                                <div class="col-lg-9">
+                                                                     <input type="email" class="form-control" name="email" value="<?php  echo $row->Email;?>" required='true'>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -162,30 +170,21 @@ foreach($results as $row)
                                                                     <label class="login2 pull-right pull-right-pro">Mobile Number</label>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <input type="text" class="form-control" readonly="true" value="<?php  echo $row->MobileNumber;?>" />
+                                                                    <input type="text" class="form-control" name="mobilenumber" value="<?php  echo $row->MobileNumber;?>" required='true' maxlength='10'>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="form-group-inner">
                                                             <div class="row">
                                                                 <div class="col-lg-3">
-                                                                    <label class="login2 pull-right pull-right-pro">Address</label>
+                                                                    <label class="login2 pull-right pull-right-pro">Admin Registration Date</label>
                                                                 </div>
                                                                 <div class="col-lg-9">
-                                                                    <textarea type="text" class="form-control" name="add" value="" /><?php  echo $row->Address;?></textarea>
+                                                                   <input type="text" class="form-control" id="email2" name="" value="<?php  echo $row->AdminRegdate;?>" readonly="true">
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                       <div class="form-group-inner">
-                                                            <div class="row">
-                                                                <div class="col-lg-3">
-                                                                    <label class="login2 pull-right pull-right-pro">Registration Date</label>
-                                                                </div>
-                                                                <div class="col-lg-9">
-                                                                    <input type="text" class="form-control" readonly="true" value="<?php  echo $row->RegDate;?>" />
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                     
                                                
                                                     <?php $cnt=$cnt+1;}} ?>
                                                         <div class="form-group-inner">

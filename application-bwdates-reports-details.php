@@ -5,27 +5,7 @@ include('includes/dbconnection.php');
 if (strlen($_SESSION['obcsaid']==0)) {
   header('location:logout.php');
   } else{
-if(isset($_POST['submit']))
-  {
 
-
-$vid=$_GET['viewid'];
-    $bookingid=$_GET['bookingid'];
-    $status=$_POST['status'];
-   $remark=$_POST['remark'];
-  
-
-$sql= "update tblapplication set Status=:status,Remark=:remark where ID=:vid";
-$query=$dbh->prepare($sql);
-$query->bindParam(':status',$status,PDO::PARAM_STR);
-$query->bindParam(':remark',$remark,PDO::PARAM_STR);
-$query->bindParam(':vid',$vid,PDO::PARAM_STR);
-
- $query->execute();
-
-  echo '<script>alert("Remark has been updated")</script>';
- echo "<script>window.location.href ='all-birth-application.php'</script>";
-}
 
 
   ?>
@@ -34,7 +14,7 @@ $query->bindParam(':vid',$vid,PDO::PARAM_STR);
 
 <head>
    
-    <title>Manage Application Form | Online Birth Certificate System</title>
+    <title>All Application | Online Birth Certificate System</title>
   
     <!-- Google Fonts
 		============================================ -->
@@ -96,7 +76,7 @@ $query->bindParam(':vid',$vid,PDO::PARAM_STR);
                                         <ul class="breadcome-menu">
                                             <li><a href="dashboard.php">Home</a> <span class="bread-slash">/</span>
                                             </li>
-                                            <li><span class="bread-blod">Application Form</span>
+                                            <li><span class="bread-blod">All Application</span>
                                             </li>
                                         </ul>
                                     </div>
@@ -116,7 +96,7 @@ $query->bindParam(':vid',$vid,PDO::PARAM_STR);
                             <div class="sparkline13-list shadow-reset">
                                 <div class="sparkline13-hd">
                                     <div class="main-sparkline13-hd">
-                                        <h1>View <span class="table-project-n">Detail of</span> Application</h1>
+                                        <h1>View <span class="table-project-n">Detail of</span> All Application</h1>
                                         <div class="sparkline13-outline-icon">
                                             <span class="sparkline13-collapse-link"><i class="fa fa-chevron-up"></i></span>
                                             <span><i class="fa fa-wrench"></i></span>
@@ -126,13 +106,40 @@ $query->bindParam(':vid',$vid,PDO::PARAM_STR);
                                 </div>
                                 <div class="sparkline13-graph">
                                     <div class="datatable-dashv1-list custom-datatable-overright">
-                                       
+                                        <div id="toolbar">
+                                            <select class="form-control">
+                                                <option value="">Export Basic</option>
+                                                <option value="all">Export All</option>
+                                                <option value="selected">Export Selected</option>
+                                            </select>
+                                        </div>
                                          <?php
-                               $vid=$_GET['viewid'];
+$fdate=$_POST['fromdate'];
+$tdate=$_POST['todate'];
 
-$sql="SELECT tblapplication.*,tbluser.FirstName,tbluser.LastName,tbluser.MobileNumber,tbluser.Address from  tblapplication join  tbluser on tblapplication.UserID=tbluser.ID where tblapplication.ID=:vid";
+?>
+<h4 align="center" style="color:blue">Report from <?php echo $fdate?> to <?php echo $tdate?></h4>
+                                        <table id="table" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-show-refresh="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true" data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
+                                            <thead>
+                                                <tr>
+                                                    <th data-field="state" data-checkbox="true"></th>
+                                                    <th>S.No</th>
+                                                    <th>Application Number</th>
+                                                    <th>Name</th>
+                                                    <th >Mobile Number</th>
+                                                    <th>Father's Name</th>
+                                                    <th>Status</th>
+                                                    <th data-field="action">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                               
+                                             
+                                              <?php
+                                          
+$sql="SELECT * from tblapplication where date(Dateofapply) between '$fdate' and '$tdate'";
+
 $query = $dbh -> prepare($sql);
-$query-> bindParam(':vid', $vid, PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 
@@ -141,140 +148,26 @@ if($query->rowCount() > 0)
 {
 foreach($results as $row)
 {               ?>
-                                <table border="1" class="table table-bordered">
- <tr align="center">
-<td colspan="4" style="font-size:20px;color:blue">
- User Details</td></tr>
-<tr align="center">
-<td colspan="4" style="font-size:20px;color:red">
- Application Number:   <?php  echo $row->ApplicationID;?></td></tr>
-    <tr>
-    <th scope>First Name</th>
-    <td><?php  echo $row->FirstName;?></td>
-    <th scope>Last Name</th>
-    <td><?php  echo $row->LastName;?></td>
-  </tr>
-  <tr>
-    <th scope>Mobile Number</th>
-    <td><?php  echo $row->MobileNumber;?></td>
-    <th>Address</th>
-    <td><?php  echo $row->Address;?></td>
-  </tr>
-<tr align="center">
-<td colspan="4" style="font-size:20px;color:blue">
- Application Details</td></tr>
- <tr>
-    <th scope>Full Name</th>
-    <td><?php  echo $row->FullName;?></td>
-    <th scope>Gender</th>
-    <td><?php  echo $row->Gender;?></td>
-  </tr>
-   <tr>
-    <th scope>Date of Birth</th>
-    <td><?php  echo $row->DateofBirth;?></td>
-    <th scope>Place of Birth</th>
-    <td><?php  echo $row->PlaceofBirth;?></td>
-  </tr>
-  <tr>
-    <th scope>Name of Father</th>
-    <td><?php  echo $row->NameofFather;?></td>
-    <th scope>Permanent Address</th>
-    <td><?php  echo $row->PermanentAdd;?></td>
-  </tr>
-   <tr>
-    <th scope>Postal Address</th>
-    <td><?php  echo $row->PostalAdd;?></td>
-    <th scope>Mobile Number</th>
-    <td><?php  echo $row->MobileNumber;?></td>
-  </tr>
-   <tr>
-    <th scope>Email</th>
-    <td><?php  echo $row->Email;?></td>
-    <th scope>Date of apply</th>
-    <td><?php  echo $row->Dateofapply;?></td>
-  </tr>
-  <tr>
-    
-     <th>Order Final Status</th>
+                                                <tr>
+                                                    <td></td>
+                                                    <td><?php echo htmlentities($cnt);?></td>
+                                                    <td><?php  echo htmlentities($row->ApplicationID);?></td>
+                                                    <td><?php  echo htmlentities($row->FullName);?></td>
+                                                   <td><?php  echo htmlentities($row->MobileNumber);?></td>
+                                                    <td><?php  echo htmlentities($row->NameofFather);?></td>
+                                                  <?php if($row->Status==""){ ?>
 
-    <td> <?php  $status=$row->Status;
-    
-if($row->Status=="Verified")
-{
-  echo "Your application has been verified";
-}
-
-if($row->Status=="Rejected")
-{
- echo "Your application has been cancelled";
-}
-
-
-if($row->Status=="")
-{
-  echo "Pending";
-}
- 
-
-     ;?></td>
-     <th >Admin Remark</th>
-    <?php if($row->Status==""){ ?>
-
-                     <td><?php echo "Your application has still pending"; ?></td>
+                     <td><?php echo "Still Pending"; ?></td>
 <?php } else { ?>                  <td><?php  echo htmlentities($row->Status);?>
                   </td>
                   <?php } ?>
-  </tr>
- 
-  <?php $cnt=$cnt+1;}} ?>
-</table>
-<?php 
-
-if ($status==""){
-?> 
-<p align="center"  style="padding-top: 20px">                            
- <button class="btn btn-primary waves-effect waves-light w-lg" data-toggle="modal" data-target="#myModal">Take Action</button></p>  
-
-<?php } ?>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-     <div class="modal-content">
-      <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">Take Action</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body">
-                                                <table class="table table-bordered table-hover data-tables">
-
-                                <form method="post" name="submit">
-
-                                
-                               
-     <tr>
-    <th>Remark :</th>
-    <td>
-    <textarea name="remark" placeholder="Remark" rows="12" cols="14" class="form-control wd-450" required="true"></textarea></td>
-  </tr> 
-   
- 
-  <tr>
-    <th>Status :</th>
-    <td>
-
-   <select name="status" class="form-control wd-450" required="true" >
-     <option value="Verified" selected="true">Verified</option>
-     <option value="Rejected">Rejected</option>
-   </select></td>
-  </tr>
-</table>
-</div>
-<div class="modal-footer">
- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
- <button type="submit" name="submit" class="btn btn-primary">Update</button>
-  
-  </form>
+                                                    <td class="datatable-ct"><a href="view-application-detail.php?viewid=<?php echo htmlentities ($row->ID);?>"><i class="fa fa-eye" aria-hidden="true"></i></a>
+                                                    </td>
+                                                </tr>
+                                             <?php $cnt=$cnt+1;}} ?>  
+                                            
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>

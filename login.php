@@ -5,22 +5,34 @@ include('includes/dbconnection.php');
 
 if(isset($_POST['login'])) 
   {
-    $mobno=$_POST['mobno'];
+    $username=$_POST['username'];
     $password=md5($_POST['password']);
-    $sql ="SELECT ID FROM tbluser WHERE MobileNumber=:mobno and Password=:password";
+    $sql ="SELECT ID FROM tbladmin WHERE UserName=:username and Password=:password";
     $query=$dbh->prepare($sql);
-    $query->bindParam(':mobno',$mobno,PDO::PARAM_STR);
+    $query-> bindParam(':username', $username, PDO::PARAM_STR);
 $query-> bindParam(':password', $password, PDO::PARAM_STR);
     $query-> execute();
     $results=$query->fetchAll(PDO::FETCH_OBJ);
     if($query->rowCount() > 0)
 {
 foreach ($results as $result) {
-$_SESSION['obcsuid']=$result->ID;
+$_SESSION['obcsaid']=$result->ID;
 }
 
-
-$_SESSION['login']=$_POST['mobno'];
+  if(!empty($_POST["remember"])) {
+//COOKIES for username
+setcookie ("user_login",$_POST["username"],time()+ (10 * 365 * 24 * 60 * 60));
+//COOKIES for password
+setcookie ("userpassword",$_POST["password"],time()+ (10 * 365 * 24 * 60 * 60));
+} else {
+if(isset($_COOKIE["user_login"])) {
+setcookie ("user_login","");
+if(isset($_COOKIE["userpassword"])) {
+setcookie ("userpassword","");
+        }
+      }
+}
+$_SESSION['login']=$_POST['username'];
 echo "<script type='text/javascript'> document.location ='dashboard.php'; </script>";
 } else{
 echo "<script>alert('Invalid Details');</script>";
@@ -99,20 +111,20 @@ echo "<script>alert('Invalid Details');</script>";
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="login-title">
-                                                <h1 style="color: red">User Login Form</h1>
+                                                <h1 style="color: red">Admin Login Form</h1>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4">
                                             <div class="login-input-head">
-                                                <p>Mobile Number</p>
+                                                <p>User Name</p>
                                             </div>
                                         </div>
                                         <div class="col-lg-8">
                                             <div class="login-input-area">
-                                                <input type="text" name="mobno" maxlength="10" pattern="[0-9]+" required="true" />
-                                                <i class="fa fa-mobile login-user" aria-hidden="true"></i>
+                                                <input type="text" placeholder="User Name" required="true" name="username" value="<?php if(isset($_COOKIE["user_login"])) { echo $_COOKIE["user_login"]; } ?>" >
+                                                <i class="fa fa-user login-user" aria-hidden="true"></i>
                                             </div>
                                         </div>
                                     </div>
@@ -124,7 +136,7 @@ echo "<script>alert('Invalid Details');</script>";
                                         </div>
                                         <div class="col-lg-8">
                                             <div class="login-input-area">
-                                                <input type="password" name="password" required="true" />
+                                                <input type="password" placeholder="Password" name="password" required="true" value="<?php if(isset($_COOKIE["userpassword"])) { echo $_COOKIE["userpassword"]; } ?>">
                                                 <i class="fa fa-lock login-user"></i>
                                             </div>
                                             <div class="row">
@@ -135,7 +147,15 @@ echo "<script>alert('Invalid Details');</script>";
                                                     </div>
                                                 </div>
                                             </div>
-                                           
+                                             <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="login-keep-me">
+                                                        <label class="checkbox">
+                                                            <input type="checkbox" name="remember" id="remember" <?php if(isset($_COOKIE["user_login"])) { ?> checked <?php } ?>><i></i>Keep me logged in
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -148,9 +168,9 @@ echo "<script>alert('Invalid Details');</script>";
                                                 <button type="submit" class="login-button login-button-lg" name="login">Log in</button>
 
                                             </div>
-                                            <p><a href="register.php">Don't have an account ? Sign Up</a></p>
+                                           <p><a href="../index.php">Back Home!!!</a></p>
                                         </div>
-<p style="text-align: center;"><a href="../index.php">Back Home!!!</a></p>
+
                                     </div>
                                 </div>
                             </div>

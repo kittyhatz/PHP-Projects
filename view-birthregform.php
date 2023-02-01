@@ -131,10 +131,9 @@ if (strlen($_SESSION['obcsuid']==0)) {
                                              
                                               <?php
                                             $uid= $_SESSION['obcsuid'];
-$sql="SELECT * from tblapplication where UserID=:uid";
+$sql="SELECT * from tblapplication";
 
 $query = $dbh -> prepare($sql);
-$query-> bindParam(':uid', $uid, PDO::PARAM_STR);
 $query->execute();
 $results=$query->fetchAll(PDO::FETCH_OBJ);
 
@@ -149,7 +148,7 @@ foreach($results as $row)
                                                     <td><?php  echo htmlentities($row->ApplicationID);?></td>
                                                     <td><?php  echo htmlentities($row->FullName);?></td>
                                                    <td><?php  echo htmlentities($row->MobileNumber);?></td>
-                                                    <td><?php  echo htmlentities($row->NameofFather);?></td>
+                                                    <td><?php  echo htmlentities($row->MobileNumber);?></td>
                                                   <?php if($row->Status==""){ ?>
 
                      <td><?php echo "Still Pending"; ?></td>

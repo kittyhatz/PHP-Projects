@@ -105,14 +105,15 @@ echo "<script>alert('This Mobile Number already exist. Please try again');</scri
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="logo">
-                                                <h3 style="font-weight: bold;color: blue">OBCS</h3>
+                                                <a href="login.php"><img src="img/logo/logo.png" alt="" />
+                                                </a>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="login-title">
-                                                <h1 style="color: red">User Registration Form</h1>
+                                                <h1>Registration Form</h1>
                                             </div>
                                         </div>
                                     </div>
